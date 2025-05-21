@@ -124,12 +124,10 @@ self.addEventListener('push', event => {
     
     // Tentar obter o último app selecionado do localStorage ou usar o padrão
     let appIcon = data.icon || (supportsSvg ? 'icons/icon-192x192.svg' : 'icons/icon-192x192.png');
-    let appName = data.appName || '';
     
     // Se um appType foi fornecido, usar suas configurações
     if (data.appType && apps[data.appType]) {
       appIcon = apps[data.appType].icon;
-      appName = apps[data.appType].name + ': ';
     }
     
     const options = {
@@ -144,7 +142,7 @@ self.addEventListener('push', event => {
     };
     
     event.waitUntil(
-      self.registration.showNotification(appName + data.title, options)
+      self.registration.showNotification(data.title, options)
     );
   }
 });

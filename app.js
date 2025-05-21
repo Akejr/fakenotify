@@ -96,7 +96,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Função para formatar valor em Real
     function formatCurrency(value) {
-        return parseFloat(value).toFixed(2).replace('.', ',');
+        // Converter para número, adicionar separador de milhar e substituir ponto decimal por vírgula
+        return parseFloat(value)
+            .toFixed(2)
+            .replace('.', ',')
+            .replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     }
 
     // Atualizar preview da notificação
@@ -272,7 +276,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             try {
                 // Tentar criar notificação nativa com o ícone do app selecionado
-                const notification = new Notification(apps[app].name + ": " + title, {
+                const notification = new Notification(title, {
                     body: message,
                     icon: apps[app].icon,
                     badge: apps[app].icon,
