@@ -1,4 +1,4 @@
-const CACHE_NAME = 'notifications-app-v1';
+const CACHE_NAME = 'nubank-app-v1';
 const urlsToCache = [
   '/',
   '/index.html',

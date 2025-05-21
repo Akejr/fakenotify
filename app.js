@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 },
                 'transferencia': {
                     title: 'Transfêrencia recebida',
-                    template: 'Você recebeu uma transferência de R$ {amount} de {name}.'
+                    template: 'Você recebeu uma transferência de\nR$ {amount} de {name}.'
                 },
                 'cashback': {
                     title: 'Cashback recebido',

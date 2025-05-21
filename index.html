@@ -122,7 +122,7 @@
                     </div>
                     <div class="notification-content">
                         <div class="notification-title">Transfêrencia recebida</div>
-                        <div class="notification-message">Você recebeu uma transferência de R$ <span class="amount-preview">157,90</span> de <span class="name-preview">João Silva</span>.</div>
+                        <div class="notification-message">Você recebeu uma transferência de<br>R$ <span class="amount-preview">157,90</span> de <span class="name-preview">João Silva</span>.</div>
                     </div>
                 </div>
             </div>
@@ -135,11 +135,21 @@
 
     <script src="app.js"></script>
     <script>
-        // Registrar o Service Worker
+        // Limpar e registrar o Service Worker
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('./sw.js')
-                .then(reg => console.log('Service worker registrado', reg))
-                .catch(err => console.log('Erro ao registrar service worker', err));
+            // Primeiro, tentar desregistrar qualquer service worker existente
+            navigator.serviceWorker.getRegistrations().then(registrations => {
+                for(let registration of registrations) {
+                    registration.unregister();
+                    console.log('Service Worker desregistrado');
+                }
+                // Após desregistrar, registrar o novo service worker
+                setTimeout(() => {
+                    navigator.serviceWorker.register('./sw.js')
+                        .then(reg => console.log('Novo Service worker registrado', reg))
+                        .catch(err => console.log('Erro ao registrar service worker', err));
+                }, 1000);
+            });
         }
         
         // Recuperar e aplicar o último app selecionado se houver
