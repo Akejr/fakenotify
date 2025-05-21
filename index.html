@@ -9,10 +9,10 @@
     <link rel="manifest" href="manifest.json">
     
     <!-- Ícones específicos para iOS -->
-    <link rel="apple-touch-icon" href="icons/ios/apple-icon-180.png">
-    <link rel="apple-touch-icon" sizes="152x152" href="icons/ios/apple-icon-152.png">
-    <link rel="apple-touch-icon" sizes="180x180" href="icons/ios/apple-icon-180.png">
-    <link rel="apple-touch-icon" sizes="167x167" href="icons/ios/apple-icon-167.png">
+    <link rel="apple-touch-icon" href="icons/icone verdadeiro.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="icons/icone verdadeiro.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="icons/icone verdadeiro.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="icons/icone verdadeiro.png">
     
     <!-- Ícone de inicialização para iOS -->
     <link rel="apple-touch-startup-image" href="icons/ios/apple-splash-2048-2732.png" media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)">
@@ -26,7 +26,7 @@
     <!-- Configurações para o modo standalone no iOS -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="Notificações">
+    <meta name="apple-mobile-web-app-title" content="Nubank">
     
     <!-- Scripts de detecção de SVG -->
     <script>
@@ -46,8 +46,8 @@
             if (!isIOS) {
                 const favicon = document.createElement('link');
                 favicon.rel = 'icon';
-                favicon.type = iconMime;
-                favicon.href = `icons/icon-192x192.${iconType}`;
+                favicon.type = 'image/png';
+                favicon.href = 'icons/icone verdadeiro.png';
                 favicon.id = 'favicon';
                 document.head.appendChild(favicon);
             }
