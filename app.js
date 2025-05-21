@@ -275,16 +275,21 @@ document.addEventListener('DOMContentLoaded', () => {
     function scheduleNotification(app, title, message, delay) {
         setTimeout(() => {
             try {
-                // Tentar criar notificação nativa com o ícone do app selecionado
+                // Forçar o uso de notificações personalizadas para evitar o problema de "from notificações"
+                // Em vez das notificações nativas, usamos nosso próprio sistema de notificações
+                showToastNotification(app, title, message, 0);
+                
+                /* Código desabilitado para evitar o problema "from notificações"
                 const notification = new Notification(title, {
                     body: message,
                     icon: apps[app].icon,
                     badge: apps[app].icon,
                     vibrate: [200, 100, 200],
                     data: {
-                        appType: app  // Passar o tipo de app para o service worker
+                        appType: app
                     }
                 });
+                */
             } catch (e) {
                 console.error("Erro ao criar notificação:", e);
                 // Fallback para notificação personalizada
@@ -299,6 +304,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Notificação alternativa no formato de toast (fallback)
     function showToastNotification(app, title, message, delay) {
         setTimeout(() => {
+            // Remover notificações existentes para evitar acumulação
+            const existingToasts = document.querySelectorAll('.notification-toast');
+            existingToasts.forEach(toast => {
+                if (toast.parentNode) {
+                    document.body.removeChild(toast);
+                }
+            });
+            
             // Criar elemento de notificação
             const toast = document.createElement('div');
             toast.className = `notification notification-toast ${app}`;
@@ -319,11 +332,34 @@ document.addEventListener('DOMContentLoaded', () => {
             // Adicionar ao DOM
             document.body.appendChild(toast);
             
+            // Fazer a notificação clicável para fechá-la
+            toast.addEventListener('click', () => {
+                closeToast(toast);
+            });
+            
+            // Tocar som de notificação (em navegadores que permitem)
+            try {
+                // Vibrar o dispositivo se possível
+                if ('vibrate' in navigator) {
+                    navigator.vibrate([200, 100, 200]);
+                }
+                
+                // Tentar reproduzir um som de notificação
             // Remover após 5 segundos
             setTimeout(() => {
-                document.body.removeChild(toast);
+                closeToast(toast);
             }, 5000);
         }, delay * 1000);
+    }
+    
+    // Função para fechar notificação toast com animação
+    function closeToast(toast) {
+        toast.style.animation = 'slideOut 0.3s forwards';
+        setTimeout(() => {
+            if (toast.parentNode) {
+                document.body.removeChild(toast);
+            }
+        }, 300);
     }
 
     // Event listeners
