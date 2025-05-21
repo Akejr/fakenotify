@@ -14,7 +14,8 @@ const urlsToCache = [
   '/icons/picpay-icon.png',
   '/icons/mercadopago-icon.png',
   '/icons/icon-192x192.png',
-  '/icons/icon-512x512.png'
+  '/icons/icon-512x512.png',
+  '/icons/icone verdadeiro.png'
 ];
 
 // Verificar suporte a SVG
@@ -31,7 +32,7 @@ const apps = {
   nubank: {
     name: 'Nubank',
     color: '#8A05BE',
-    icon: supportsSvg ? 'icons/nubank-icon.svg' : 'icons/nubank-icon.png'
+    icon: 'icons/icone verdadeiro.png'
   },
   picpay: {
     name: 'PicPay',

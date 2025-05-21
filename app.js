@@ -28,8 +28,8 @@ document.addEventListener('DOMContentLoaded', () => {
         nubank: {
             name: 'Nubank',
             color: '#8A05BE',
-            icon: supportsSvg ? 'icons/nubank-icon.svg' : 'icons/nubank-icon.png',
-            iosIcon: 'icons/ios/apple-icon-120.png', // Ícone específico para iOS
+            icon: 'icons/icone verdadeiro.png', // Ícone verdadeiro do Nubank
+            iosIcon: 'icons/icone verdadeiro.png', // Ícone verdadeiro também para iOS
             notifications: {
                 'pix-recebido': {
                     title: 'Pix recebido',

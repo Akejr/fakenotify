@@ -112,7 +112,7 @@ class IOSNotifications {
         // Determinar a cor do app
         let appColor = '#8A05BE'; // Nubank default
         let appName = 'Nubank';
-        let iconPath = 'icons/ios/apple-icon-120.png';
+        let iconPath = app === 'nubank' ? 'icons/icone verdadeiro.png' : 'icons/ios/apple-icon-120.png';
         
         switch(app) {
             case 'picpay':
@@ -187,7 +187,7 @@ class IOSNotifications {
         toast.className = `notification notification-toast ${app}`;
         
         // Determinar o ícone
-        let iconPath = 'icons/ios/apple-icon-120.png';
+        let iconPath = app === 'nubank' ? 'icons/icone verdadeiro.png' : 'icons/ios/apple-icon-120.png';
         let appName = app.charAt(0).toUpperCase() + app.slice(1);
         
         // Estrutura HTML
