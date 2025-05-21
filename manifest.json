@@ -1,6 +1,6 @@
 {
-  "name": "Notificações Falsas",
-  "short_name": "Notificações",
+  "name": "Nubank",
+  "short_name": "Nubank",
   "description": "Crie notificações falsas de bancos digitais",
   "start_url": "/",
   "display": "standalone",
