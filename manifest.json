@@ -1,0 +1,42 @@
+{
+  "name": "Notificações Falsas",
+  "short_name": "Notificações",
+  "description": "Crie notificações falsas de bancos digitais",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f5f5f5",
+  "theme_color": "#8A05BE",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "icons/screenshot1.jpg",
+      "sizes": "1280x720",
+      "type": "image/jpeg"
+    }
+  ],
+  "categories": ["utilities", "entertainment"],
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "shortcuts": [
+    {
+      "name": "Nova Notificação",
+      "short_name": "Nova",
+      "description": "Criar uma nova notificação falsa",
+      "url": "/"
+    }
+  ]
+} 
