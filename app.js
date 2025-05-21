@@ -11,8 +11,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const amountPreview = document.querySelector('.amount-preview');
     const themeColorMeta = document.getElementById('theme-color');
     
-    // Verificar suporte a SVG
+    // Verificar suporte a SVG e detectar iOS
     const supportsSvg = document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#Image", "1.1");
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    
+    // Se iOS e o script de notificações iOS estiver disponível, inicializá-lo
+    if (isIOS && window.iosNotifications) {
+        window.iosNotifications.init({
+            supportsSvg: supportsSvg,
+            isIOS: isIOS
+        });
+    }
     
     // Configurações dos apps com fallback para PNG
     const apps = {
@@ -20,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
             name: 'Nubank',
             color: '#8A05BE',
             icon: supportsSvg ? 'icons/nubank-icon.svg' : 'icons/nubank-icon.png',
+            iosIcon: 'icons/ios/apple-icon-120.png', // Ícone específico para iOS
             notifications: {
                 'pix-recebido': {
                     title: 'Pix recebido',
@@ -39,6 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
             name: 'PicPay',
             color: '#11C76F',
             icon: supportsSvg ? 'icons/picpay-icon.svg' : 'icons/picpay-icon.png',
+            iosIcon: 'icons/ios/apple-icon-120.png', // Usar o mesmo ícone do app
             notifications: {
                 'pix-recebido': {
                     title: 'Pix recebido!',
@@ -58,6 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
             name: 'Mercado Pago',
             color: '#009EE3',
             icon: supportsSvg ? 'icons/mercadopago-icon.svg' : 'icons/mercadopago-icon.png',
+            iosIcon: 'icons/ios/apple-icon-120.png', // Usar o mesmo ícone do app
             notifications: {
                 'pix-recebido': {
                     title: 'Pix recebido',
@@ -78,7 +90,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Ícones da app
     const appIcons = {
         default: supportsSvg ? 'icons/icon-192x192.svg' : 'icons/icon-192x192.png',
-        large: supportsSvg ? 'icons/icon-512x512.svg' : 'icons/icon-512x512.png'
+        large: supportsSvg ? 'icons/icon-512x512.svg' : 'icons/icon-512x512.png',
+        ios: 'icons/ios/apple-icon-180.png'
     };
 
     // Função para formatar valor em Real
@@ -96,9 +109,9 @@ document.addEventListener('DOMContentLoaded', () => {
         // Atualizar classes e conteúdo do preview
         previewContainer.className = `notification ${selectedApp}`;
         
-        // Atualizar ícone
+        // Atualizar ícone - usar ícone específico do iOS se estiver no iOS
         const appIcon = previewContainer.querySelector('.app-icon');
-        appIcon.src = apps[selectedApp].icon;
+        appIcon.src = isIOS ? apps[selectedApp].iosIcon : apps[selectedApp].icon;
         
         // Atualizar título do app
         const appTitle = previewContainer.querySelector('.notification-app-title');
@@ -132,6 +145,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Função para atualizar o favicon dinamicamente
     function updateFavicon(appType) {
+        // No iOS, não tentamos mudar o favicon
+        if (isIOS) return;
+        
         // Remover favicon antigo
         const oldLink = document.querySelector('link[rel="icon"]');
         if (oldLink) {
@@ -152,12 +168,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         
         document.head.appendChild(link);
-        
-        // Atualizar apple-touch-icon para iOS
-        const oldAppleIcon = document.querySelector('link[rel="apple-touch-icon"]');
-        if (oldAppleIcon) {
-            oldAppleIcon.href = apps[appType].icon;
-        }
     }
     
     // Função para atualizar a cor do tema para corresponder ao app
@@ -209,18 +219,33 @@ document.addEventListener('DOMContentLoaded', () => {
         const amount = amountInput.value || '100,00';
         const delay = parseInt(delayInput.value) || 5;
         
-        // Verificar suporte a notificações
-        if (!("Notification" in window)) {
-            alert("Este navegador não suporta notificações!");
-            return;
-        }
-
         // Configurar a notificação
         const title = apps[selectedApp].notifications[selectedNotificationType].title;
         const message = apps[selectedApp].notifications[selectedNotificationType].template
             .replace('{name}', name)
             .replace('{amount}', formatCurrency(amount));
         
+        // Para iOS, usar o sistema de notificações especial para iOS
+        if (isIOS && window.iosNotifications) {
+            // Agenda com o delay
+            setTimeout(() => {
+                window.iosNotifications.showNotification(selectedApp, title, message);
+            }, delay * 1000);
+            
+            // Feedback ao usuário
+            alert(`Notificação agendada! Aparecerá em ${delay} segundos.`);
+            
+            // Armazenar a configuração atual em localStorage
+            localStorage.setItem('lastSelectedApp', selectedApp);
+            return;
+        }
+        
+        // Para outros navegadores, verificar suporte a notificações nativas
+        if (!("Notification" in window)) {
+            alert("Este navegador não suporta notificações!");
+            return;
+        }
+
         // Se permissão já foi concedida
         if (Notification.permission === "granted") {
             scheduleNotification(selectedApp, title, message, delay);
@@ -240,14 +265,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Armazenar a configuração atual em localStorage
         localStorage.setItem('lastSelectedApp', selectedApp);
-        
-        // Atualizar o manifest.json dinamicamente (isso não funcionará em produção, apenas informativo)
-        updateManifestTheme(selectedApp);
-    }
-    
-    // Função para atualizar o manifest.json (apenas ilustrativa, não funciona em produção)
-    function updateManifestTheme(appType) {
-        console.log(`Nota: Em um ambiente de produção, você precisaria modificar o manifest.json no servidor para alterar a cor do tema para ${apps[appType].color}`);
     }
 
     // Agendar notificação após o atraso
@@ -324,5 +341,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Log para depuração
     console.log(`Suporte a SVG: ${supportsSvg ? 'Sim' : 'Não'}`);
+    console.log(`Dispositivo iOS: ${isIOS ? 'Sim' : 'Não'}`);
     console.log(`Usando ícones: ${supportsSvg ? 'SVG' : 'PNG'}`);
 }); 

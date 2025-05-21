@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Ícones iOS</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #8A05BE;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #8A05BE;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        .app-selector {
+            margin: 20px 0;
+        }
+        select {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .icon-preview {
+            border: 1px solid #eee;
+            padding: 10px;
+            border-radius: 5px;
+            width: 180px;
+            text-align: center;
+        }
+        .icon-preview img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #eee;
+            border-radius: 20%;
+        }
+        .instructions {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 30px;
+        }
+        .instructions li {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Gerador de Ícones para iOS</h1>
+    <p>Crie ícones específicos para iOS com o aplicativo selecionado.</p>
+    
+    <div class="app-selector">
+        <label for="app-type">Selecione o aplicativo:</label>
+        <select id="app-type">
+            <option value="nubank">Nubank</option>
+            <option value="picpay">PicPay</option>
+            <option value="mercadopago">Mercado Pago</option>
+            <option value="default">App Padrão (NF)</option>
+        </select>
+    </div>
+    
+    <button id="generate">Gerar Ícones iOS</button>
+    
+    <div class="preview" id="preview-container"></div>
+    
+    <div class="instructions">
+        <h2>Como usar:</h2>
+        <ol>
+            <li>Selecione o aplicativo para o qual deseja gerar ícones</li>
+            <li>Clique em "Gerar Ícones iOS"</li>
+            <li>Para cada ícone gerado, clique com o botão direito e selecione "Salvar imagem como..."</li>
+            <li>Salve o arquivo com o nome exato mostrado abaixo de cada imagem na pasta 'icons/ios'</li>
+            <li>Repita para cada aplicativo se desejar ter ícones iOS para todos eles</li>
+        </ol>
+        <p><strong>Nota:</strong> O iOS não suporta ícones dinâmicos para PWAs. Ao escolher um aplicativo aqui, 
+        você está determinando qual será o ícone padrão quando o usuário adicionar o site à tela inicial do iOS.</p>
+    </div>
+    
+    <script>
+        // Configurações de ícones por app
+        const apps = {
+            nubank: {
+                name: 'Nubank',
+                color: '#8A05BE',
+                textColor: '#FFFFFF',
+                text: 'N'
+            },
+            picpay: {
+                name: 'PicPay',
+                color: '#11C76F',
+                textColor: '#FFFFFF',
+                text: 'P'
+            },
+            mercadopago: {
+                name: 'Mercado Pago',
+                color: '#009EE3',
+                textColor: '#FFFFFF',
+                text: 'M'
+            },
+            default: {
+                name: 'Notificações Falsas',
+                color: '#8A05BE',
+                textColor: '#FFFFFF',
+                text: 'NF'
+            }
+        };
+        
+        // Tamanhos de ícones iOS necessários
+        const iosSizes = [
+            { name: 'apple-icon-180', size: 180 },
+            { name: 'apple-icon-167', size: 167 },
+            { name: 'apple-icon-152', size: 152 },
+            { name: 'apple-icon-120', size: 120 }
+        ];
+        
+        // Tamanhos para splash screens
+        const splashSizes = [
+            { name: 'apple-splash-2048-2732', width: 2048, height: 2732 }, // iPad Pro 12.9"
+            { name: 'apple-splash-1668-2388', width: 1668, height: 2388 }, // iPad Pro 11"
+            { name: 'apple-splash-1536-2048', width: 1536, height: 2048 }, // iPad 9.7"
+            { name: 'apple-splash-1125-2436', width: 1125, height: 2436 }, // iPhone X/XS
+            { name: 'apple-splash-1242-2688', width: 1242, height: 2688 }, // iPhone XS Max
+            { name: 'apple-splash-828-1792', width: 828, height: 1792 },   // iPhone XR
+            { name: 'apple-splash-750-1334', width: 750, height: 1334 }    // iPhone 8/7/6
+        ];
+        
+        // Função para criar um canvas com o ícone
+        function createIconCanvas(size, color, text, textColor) {
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            
+            // Desenhar fundo
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            
+            // Cantos arredondados - aproximadamente 20% do tamanho
+            const radius = size * 0.2;
+            ctx.moveTo(size - radius, 0);
+            ctx.quadraticCurveTo(size, 0, size, radius);
+            ctx.lineTo(size, size - radius);
+            ctx.quadraticCurveTo(size, size, size - radius, size);
+            ctx.lineTo(radius, size);
+            ctx.quadraticCurveTo(0, size, 0, size - radius);
+            ctx.lineTo(0, radius);
+            ctx.quadraticCurveTo(0, 0, radius, 0);
+            ctx.closePath();
+            
+            ctx.fill();
+            
+            // Desenhar texto
+            ctx.fillStyle = textColor;
+            const fontSize = size * 0.5; // 50% do tamanho do ícone
+            ctx.font = `bold ${fontSize}px Arial, sans-serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(text, size / 2, size / 2);
+            
+            return canvas;
+        }
+        
+        // Função para criar uma splash screen
+        function createSplashCanvas(width, height, color, text, textColor) {
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            
+            // Fundo
+            ctx.fillStyle = color;
+            ctx.fillRect(0, 0, width, height);
+            
+            // Desenhar o ícone no centro
+            const iconSize = Math.min(width, height) * 0.3; // Tamanho de 30% da menor dimensão
+            const iconCanvas = createIconCanvas(iconSize, color, text, textColor);
+            ctx.drawImage(iconCanvas, (width - iconSize) / 2, (height - iconSize) / 2);
+            
+            return canvas;
+        }
+        
+        // Manipulador do botão de geração
+        document.getElementById('generate').addEventListener('click', function() {
+            const selectedApp = document.getElementById('app-type').value;
+            const appConfig = apps[selectedApp];
+            const previewContainer = document.getElementById('preview-container');
+            
+            // Limpar previews anteriores
+            previewContainer.innerHTML = '';
+            
+            // Criar todos os ícones
+            iosSizes.forEach(iconConfig => {
+                const canvas = createIconCanvas(iconConfig.size, appConfig.color, appConfig.text, appConfig.textColor);
+                const dataUrl = canvas.toDataURL('image/png');
+                
+                // Criar visualização
+                const previewDiv = document.createElement('div');
+                previewDiv.className = 'icon-preview';
+                previewDiv.innerHTML = `
+                    <h3>${iconConfig.size}x${iconConfig.size}</h3>
+                    <img src="${dataUrl}" alt="${iconConfig.name}">
+                    <p>${iconConfig.name}.png</p>
+                `;
+                
+                previewContainer.appendChild(previewDiv);
+            });
+            
+            // Criar splash screens (apenas uma de exemplo para não sobrecarregar)
+            const exampleSplash = splashSizes[0]; // Pegar apenas o primeiro para exemplo
+            const splashCanvas = createSplashCanvas(
+                exampleSplash.width, 
+                exampleSplash.height,
+                appConfig.color,
+                appConfig.text,
+                appConfig.textColor
+            );
+            
+            const splashDataUrl = splashCanvas.toDataURL('image/png');
+            
+            // Criar visualização da splash
+            const splashPreviewDiv = document.createElement('div');
+            splashPreviewDiv.className = 'icon-preview';
+            splashPreviewDiv.style.width = '100%';
+            splashPreviewDiv.innerHTML = `
+                <h3>Exemplo de Splash Screen</h3>
+                <p>${exampleSplash.width}x${exampleSplash.height}</p>
+                <img src="${splashDataUrl}" alt="${exampleSplash.name}" style="max-width: 300px;">
+                <p>${exampleSplash.name}.png</p>
+                <p><em>Nota: Gere todas as splash screens seguindo o mesmo processo</em></p>
+            `;
+            
+            previewContainer.appendChild(splashPreviewDiv);
+            
+            // Adicionar instruções adicionais
+            const instructions = document.createElement('div');
+            instructions.className = 'instructions';
+            instructions.style.width = '100%';
+            instructions.innerHTML = `
+                <h3>Instruções de Instalação dos Ícones</h3>
+                <ol>
+                    <li>Salve cada um dos ícones acima com o nome exato indicado</li>
+                    <li>Coloque todos na pasta 'icons/ios/'</li>
+                    <li>Atualize o manifest.json e o index.html para usar estes ícones</li>
+                    <li>Para o iOS, a cor predominante será ${appConfig.color} (${appConfig.name})</li>
+                </ol>
+            `;
+            
+            previewContainer.appendChild(instructions);
+        });
+    </script>
+</body>
+</html> 
