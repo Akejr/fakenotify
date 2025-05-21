@@ -2,6 +2,23 @@
 
 Este é um aplicativo PWA (Progressive Web App) que permite criar notificações falsas de aplicativos bancários como Nubank, PicPay e Mercado Pago. O aplicativo foi desenvolvido apenas para fins de brincadeira e não deve ser usado para enganar ou prejudicar outras pessoas.
 
+![Screenshot da aplicação](https://via.placeholder.com/800x450.png?text=App+de+Notifica%C3%A7%C3%B5es+Falsas)
+
+## Como obter o projeto
+
+### Clonando do GitHub
+
+```bash
+# Clone o repositório
+git clone https://github.com/Akejr/fakenotify.git
+
+# Entre na pasta do projeto
+cd fakenotify
+
+# Se tiver Node.js instalado, execute o servidor
+node server.js
+```
+
 ## Como usar
 
 1. Abra o arquivo `index.html` no seu navegador
@@ -55,6 +72,15 @@ Para instalar o aplicativo no seu celular ou computador:
 1. Abra o site no Google Chrome, Microsoft Edge ou outro navegador compatível
 2. Clique no ícone de instalação na barra de endereço (ou no menu)
 3. Clique em "Instalar"
+
+## Tecnologias utilizadas
+
+- HTML5
+- CSS3
+- JavaScript
+- PWA (Progressive Web App)
+- Service Workers
+- Notifications API
 
 ## Observações
 
