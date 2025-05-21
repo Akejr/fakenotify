@@ -76,7 +76,7 @@ input, select {
 }
 
 .primary-button {
-  background-color: var(--nubank-color);
+  /* A cor de fundo será definida dinamicamente via JavaScript */
   color: white;
   border: none;
   padding: 12px 20px;
@@ -89,9 +89,7 @@ input, select {
   transition: background-color 0.2s;
 }
 
-.primary-button:hover {
-  background-color: #6d04a0;
-}
+/* O hover também será definido dinamicamente via JavaScript */
 
 /* Estilos das notificações */
 .notification {

@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const previewContainer = document.getElementById('preview-container');
     const namePreview = document.querySelector('.name-preview');
     const amountPreview = document.querySelector('.amount-preview');
+    const themeColorMeta = document.getElementById('theme-color');
     
     // Configurações dos apps
     const apps = {
@@ -109,6 +110,78 @@ document.addEventListener('DOMContentLoaded', () => {
         // Atualizar previews
         namePreview.textContent = name;
         amountPreview.textContent = formatCurrency(amount);
+        
+        // Atualizar favicon dinamicamente
+        updateFavicon(selectedApp);
+        
+        // Atualizar cor do tema
+        updateThemeColor(selectedApp);
+        
+        // Atualizar botão para refletir a cor do app
+        updateButtonColor(selectedApp);
+    }
+    
+    // Função para atualizar o favicon dinamicamente
+    function updateFavicon(appType) {
+        // Remover favicon antigo
+        const oldLink = document.querySelector('link[rel="icon"]');
+        if (oldLink) {
+            document.head.removeChild(oldLink);
+        }
+        
+        // Adicionar novo favicon
+        const link = document.createElement('link');
+        link.rel = 'icon';
+        link.href = apps[appType].icon;
+        link.id = 'favicon';
+        document.head.appendChild(link);
+        
+        // Atualizar apple-touch-icon para iOS
+        const oldAppleIcon = document.querySelector('link[rel="apple-touch-icon"]');
+        if (oldAppleIcon) {
+            oldAppleIcon.href = apps[appType].icon;
+        }
+    }
+    
+    // Função para atualizar a cor do tema para corresponder ao app
+    function updateThemeColor(appType) {
+        if (themeColorMeta) {
+            themeColorMeta.setAttribute('content', apps[appType].color);
+        }
+    }
+    
+    // Função para atualizar a cor do botão para corresponder ao app
+    function updateButtonColor(appType) {
+        createBtn.style.backgroundColor = apps[appType].color;
+        
+        // Ajustar a cor de hover via CSS inline
+        const style = document.createElement('style');
+        style.textContent = `.primary-button:hover { background-color: ${adjustBrightness(apps[appType].color, -20)}; }`;
+        
+        // Remover estilos antigos
+        const oldStyle = document.getElementById('dynamic-button-style');
+        if (oldStyle) {
+            document.head.removeChild(oldStyle);
+        }
+        
+        style.id = 'dynamic-button-style';
+        document.head.appendChild(style);
+    }
+    
+    // Função auxiliar para ajustar o brilho de uma cor (para o efeito hover)
+    function adjustBrightness(hex, percent) {
+        // Converte hex para RGB
+        let r = parseInt(hex.substring(1, 3), 16);
+        let g = parseInt(hex.substring(3, 5), 16);
+        let b = parseInt(hex.substring(5, 7), 16);
+        
+        // Ajusta o brilho
+        r = Math.max(0, Math.min(255, r + percent));
+        g = Math.max(0, Math.min(255, g + percent));
+        b = Math.max(0, Math.min(255, b + percent));
+        
+        // Converte de volta para hex
+        return `#${(r.toString(16).padStart(2, '0'))}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
     }
 
     // Criar e mostrar notificação
@@ -147,18 +220,32 @@ document.addEventListener('DOMContentLoaded', () => {
         else {
             showToastNotification(selectedApp, title, message, delay);
         }
+        
+        // Armazenar a configuração atual em localStorage
+        localStorage.setItem('lastSelectedApp', selectedApp);
+        
+        // Atualizar o manifest.json dinamicamente (isso não funcionará em produção, apenas informativo)
+        updateManifestTheme(selectedApp);
+    }
+    
+    // Função para atualizar o manifest.json (apenas ilustrativa, não funciona em produção)
+    function updateManifestTheme(appType) {
+        console.log(`Nota: Em um ambiente de produção, você precisaria modificar o manifest.json no servidor para alterar a cor do tema para ${apps[appType].color}`);
     }
 
     // Agendar notificação após o atraso
     function scheduleNotification(app, title, message, delay) {
         setTimeout(() => {
             try {
-                // Tentar criar notificação nativa
+                // Tentar criar notificação nativa com o ícone do app selecionado
                 const notification = new Notification(apps[app].name + ": " + title, {
                     body: message,
                     icon: apps[app].icon,
                     badge: apps[app].icon,
-                    vibrate: [200, 100, 200]
+                    vibrate: [200, 100, 200],
+                    data: {
+                        appType: app  // Passar o tipo de app para o service worker
+                    }
                 });
             } catch (e) {
                 // Fallback para notificação personalizada
@@ -209,4 +296,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Inicializar preview
     updatePreview();
+    
+    // Recuperar app selecionado anteriormente
+    const lastSelectedApp = localStorage.getItem('lastSelectedApp');
+    if (lastSelectedApp && apps[lastSelectedApp]) {
+        appTypeSelect.value = lastSelectedApp;
+        updatePreview();
+    }
 }); 

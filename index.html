@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#8A05BE">
+    <meta name="theme-color" content="#8A05BE" id="theme-color">
     <title>Notificações Falsas</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png" id="apple-icon">
+    <link rel="icon" href="icons/icon-192x192.png" id="favicon">
 </head>
 <body>
     <div class="app-container">
@@ -83,6 +84,19 @@
                 .then(reg => console.log('Service worker registrado', reg))
                 .catch(err => console.log('Erro ao registrar service worker', err));
         }
+        
+        // Recuperar e aplicar o último app selecionado se houver
+        document.addEventListener('DOMContentLoaded', () => {
+            const lastSelectedApp = localStorage.getItem('lastSelectedApp');
+            if (lastSelectedApp) {
+                const appSelector = document.getElementById('app-type');
+                if (appSelector) {
+                    appSelector.value = lastSelectedApp;
+                    // Disparar o evento change para atualizar a interface
+                    appSelector.dispatchEvent(new Event('change'));
+                }
+            }
+        });
     </script>
 </body>
 </html> 
