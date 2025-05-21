@@ -5,6 +5,11 @@ const urlsToCache = [
   '/styles.css',
   '/app.js',
   '/manifest.json',
+  '/icons/nubank-icon.svg',
+  '/icons/picpay-icon.svg',
+  '/icons/mercadopago-icon.svg',
+  '/icons/icon-192x192.svg',
+  '/icons/icon-512x512.svg',
   '/icons/nubank-icon.png',
   '/icons/picpay-icon.png',
   '/icons/mercadopago-icon.png',
@@ -12,22 +17,31 @@ const urlsToCache = [
   '/icons/icon-512x512.png'
 ];
 
+// Verificar suporte a SVG
+function checkSvgSupport() {
+  // No Service Worker não podemos verificar diretamente, então usamos uma abordagem conservadora
+  // e assumimos que PNGs são mais compatíveis
+  return false;
+}
+
+const supportsSvg = checkSvgSupport();
+
 // Configurações dos apps
 const apps = {
   nubank: {
     name: 'Nubank',
     color: '#8A05BE',
-    icon: 'icons/nubank-icon.png'
+    icon: supportsSvg ? 'icons/nubank-icon.svg' : 'icons/nubank-icon.png'
   },
   picpay: {
     name: 'PicPay',
     color: '#11C76F',
-    icon: 'icons/picpay-icon.png'
+    icon: supportsSvg ? 'icons/picpay-icon.svg' : 'icons/picpay-icon.png'
   },
   mercadopago: {
     name: 'Mercado Pago',
     color: '#009EE3',
-    icon: 'icons/mercadopago-icon.png'
+    icon: supportsSvg ? 'icons/mercadopago-icon.svg' : 'icons/mercadopago-icon.png'
   }
 };
 
@@ -99,7 +113,7 @@ function getAppIcon(appType) {
   if (appType && apps[appType]) {
     return apps[appType].icon;
   }
-  return 'icons/icon-192x192.png'; // Ícone padrão
+  return supportsSvg ? 'icons/icon-192x192.svg' : 'icons/icon-192x192.png'; // Ícone padrão
 }
 
 // Gerenciamento de notificações push
@@ -108,7 +122,7 @@ self.addEventListener('push', event => {
     const data = event.data.json();
     
     // Tentar obter o último app selecionado do localStorage ou usar o padrão
-    let appIcon = data.icon || 'icons/icon-192x192.png';
+    let appIcon = data.icon || (supportsSvg ? 'icons/icon-192x192.svg' : 'icons/icon-192x192.png');
     let appName = data.appName || '';
     
     // Se um appType foi fornecido, usar suas configurações

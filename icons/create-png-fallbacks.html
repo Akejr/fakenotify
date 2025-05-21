@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Converter SVG para PNG</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 10px 0;
+            background-color: #8A05BE;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        canvas {
+            display: block;
+            border: 1px solid #ddd;
+            margin: 10px 0;
+        }
+        .result {
+            margin: 20px 0;
+        }
+        img {
+            max-width: 192px;
+            border: 1px solid #eee;
+            display: block;
+            margin: 10px 0;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>Gerador de ícones PNG</h1>
+    <p>Este utilitário cria versões PNG dos ícones SVG para melhor compatibilidade.</p>
+    
+    <button id="generate">Gerar PNGs de todos os ícones</button>
+    
+    <div id="results"></div>
+    
+    <script>
+        // Lista de SVGs para converter
+        const svgFiles = [
+            { name: 'nubank-icon', size: 192 },
+            { name: 'picpay-icon', size: 192 },
+            { name: 'mercadopago-icon', size: 192 },
+            { name: 'icon-192x192', size: 192 },
+            { name: 'icon-512x512', size: 512 }
+        ];
+        
+        // Função para converter um SVG em PNG
+        function convertToPNG(svgPath, width, height) {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    resolve({
+                        dataUrl: canvas.toDataURL('image/png'),
+                        canvas: canvas
+                    });
+                };
+                img.onerror = function() {
+                    reject(new Error(`Falha ao carregar o SVG: ${svgPath}`));
+                };
+                img.src = svgPath;
+            });
+        }
+        
+        // Handler para o botão de geração
+        document.getElementById('generate').addEventListener('click', async function() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<h2>Processando...</h2>';
+            
+            const results = [];
+            
+            for (const file of svgFiles) {
+                try {
+                    // Converter SVG para PNG
+                    const svgPath = `./${file.name}.svg`;
+                    const result = await convertToPNG(svgPath, file.size, file.size);
+                    
+                    // Adicionar resultado
+                    results.push({
+                        name: file.name,
+                        pngData: result.dataUrl,
+                        size: file.size
+                    });
+                    
+                    // Mostrar canvas
+                    const resultDiv = document.createElement('div');
+                    resultDiv.className = 'result';
+                    resultDiv.innerHTML = `
+                        <h3>${file.name}.png (${file.size}x${file.size})</h3>
+                        <img src="${result.dataUrl}" alt="${file.name}">
+                        <p>Clique com o botão direito na imagem e selecione "Salvar imagem como...".</p>
+                        <p>Salve como: <strong>${file.name}.png</strong></p>
+                    `;
+                    
+                    resultsDiv.appendChild(resultDiv);
+                    resultsDiv.appendChild(document.createElement('hr'));
+                    
+                } catch (error) {
+                    console.error(error);
+                    resultsDiv.innerHTML += `<p>Erro ao processar ${file.name}.svg: ${error.message}</p>`;
+                }
+            }
+            
+            // Adicionar instruções
+            const instructions = document.createElement('div');
+            instructions.innerHTML = `
+                <h2>Instruções para usar os ícones PNG:</h2>
+                <ol>
+                    <li>Salve todas as imagens acima como PNG na pasta de ícones.</li>
+                    <li>Você pode usar os ícones PNG como fallback para navegadores que não suportam SVG.</li>
+                    <li>Para máxima compatibilidade, considere usar ambos os formatos no seu código.</li>
+                </ol>
+                <pre>
+// Exemplo de código para detectar suporte a SVG
+function svgSupported() {
+    return document.implementation.hasFeature(
+        "http://www.w3.org/TR/SVG11/feature#Image", "1.1"
+    );
+}
+
+// Usando o ícone correto baseado no suporte do navegador
+const iconPath = svgSupported() 
+    ? 'icons/nubank-icon.svg' 
+    : 'icons/nubank-icon.png';
+                </pre>
+            `;
+            resultsDiv.appendChild(instructions);
+        });
+    </script>
+</body>
+</html> 

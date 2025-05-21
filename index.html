@@ -7,8 +7,41 @@
     <title>Notificações Falsas</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="manifest" href="manifest.json">
-    <link rel="apple-touch-icon" href="icons/icon-192x192.png" id="apple-icon">
-    <link rel="icon" href="icons/icon-192x192.png" id="favicon">
+    
+    <!-- Scripts de detecção de SVG -->
+    <script>
+        // Verifica se o navegador suporta SVG
+        function svgSupported() {
+            return document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#Image", "1.1");
+        }
+        
+        // Define o ícone correto com base no suporte
+        function setIcons() {
+            const usesSvg = svgSupported();
+            const iconType = usesSvg ? 'svg' : 'png';
+            const iconMime = usesSvg ? 'image/svg+xml' : 'image/png';
+            
+            // Para iOS
+            const appleIcon = document.createElement('link');
+            appleIcon.rel = 'apple-touch-icon';
+            appleIcon.href = `icons/icon-192x192.${iconType}`;
+            appleIcon.id = 'apple-icon';
+            document.head.appendChild(appleIcon);
+            
+            // Favicon
+            const favicon = document.createElement('link');
+            favicon.rel = 'icon';
+            favicon.type = iconMime;
+            favicon.href = `icons/icon-192x192.${iconType}`;
+            favicon.id = 'favicon';
+            document.head.appendChild(favicon);
+            
+            console.log(`Usando ícones ${iconType.toUpperCase()} (suporte a SVG: ${usesSvg})`);
+        }
+        
+        // Executa imediatamente
+        setIcons();
+    </script>
 </head>
 <body>
     <div class="app-container">
@@ -59,7 +92,8 @@
                 <h3>Preview da Notificação:</h3>
                 <div id="preview-container" class="notification nubank">
                     <div class="notification-header">
-                        <img src="icons/nubank-icon.png" alt="App Icon" class="app-icon">
+                        <!-- O src será atualizado via JavaScript -->
+                        <img src="icons/nubank-icon.svg" alt="App Icon" class="app-icon">
                         <div class="notification-app-title">Nubank</div>
                         <div class="notification-time">agora</div>
                     </div>

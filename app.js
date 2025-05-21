@@ -11,12 +11,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const amountPreview = document.querySelector('.amount-preview');
     const themeColorMeta = document.getElementById('theme-color');
     
-    // Configurações dos apps
+    // Verificar suporte a SVG
+    const supportsSvg = document.implementation.hasFeature("http://www.w3.org/TR/SVG11/feature#Image", "1.1");
+    
+    // Configurações dos apps com fallback para PNG
     const apps = {
         nubank: {
             name: 'Nubank',
             color: '#8A05BE',
-            icon: 'icons/nubank-icon.png',
+            icon: supportsSvg ? 'icons/nubank-icon.svg' : 'icons/nubank-icon.png',
             notifications: {
                 'pix-recebido': {
                     title: 'Pix recebido',
@@ -35,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
         picpay: {
             name: 'PicPay',
             color: '#11C76F',
-            icon: 'icons/picpay-icon.png',
+            icon: supportsSvg ? 'icons/picpay-icon.svg' : 'icons/picpay-icon.png',
             notifications: {
                 'pix-recebido': {
                     title: 'Pix recebido!',
@@ -54,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
         mercadopago: {
             name: 'Mercado Pago',
             color: '#009EE3',
-            icon: 'icons/mercadopago-icon.png',
+            icon: supportsSvg ? 'icons/mercadopago-icon.svg' : 'icons/mercadopago-icon.png',
             notifications: {
                 'pix-recebido': {
                     title: 'Pix recebido',
@@ -70,6 +73,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         }
+    };
+    
+    // Ícones da app
+    const appIcons = {
+        default: supportsSvg ? 'icons/icon-192x192.svg' : 'icons/icon-192x192.png',
+        large: supportsSvg ? 'icons/icon-512x512.svg' : 'icons/icon-512x512.png'
     };
 
     // Função para formatar valor em Real
@@ -134,6 +143,14 @@ document.addEventListener('DOMContentLoaded', () => {
         link.rel = 'icon';
         link.href = apps[appType].icon;
         link.id = 'favicon';
+        
+        // Especificar o tipo correto
+        if (supportsSvg) {
+            link.type = 'image/svg+xml';
+        } else {
+            link.type = 'image/png';
+        }
+        
         document.head.appendChild(link);
         
         // Atualizar apple-touch-icon para iOS
@@ -248,6 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 });
             } catch (e) {
+                console.error("Erro ao criar notificação:", e);
                 // Fallback para notificação personalizada
                 showToastNotification(app, title, message, 0);
             }
@@ -303,4 +321,8 @@ document.addEventListener('DOMContentLoaded', () => {
         appTypeSelect.value = lastSelectedApp;
         updatePreview();
     }
+    
+    // Log para depuração
+    console.log(`Suporte a SVG: ${supportsSvg ? 'Sim' : 'Não'}`);
+    console.log(`Usando ícones: ${supportsSvg ? 'SVG' : 'PNG'}`);
 }); 
