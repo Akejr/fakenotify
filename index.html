@@ -88,7 +88,7 @@
                     <label for="notification-type">Tipo de Notificação:</label>
                     <select id="notification-type">
                         <option value="pix-recebido">Pix Recebido</option>
-                        <option value="transferencia">Transferência Recebida</option>
+                        <option value="transferencia" selected>Transferência Recebida</option>
                         <option value="cashback">Cashback</option>
                     </select>
                 </div>
@@ -100,7 +100,7 @@
 
                 <div class="form-group">
                     <label for="amount">Valor (R$):</label>
-                    <input type="number" id="amount" placeholder="Ex: 100,00" step="0.01">
+                    <input type="number" id="amount" placeholder="Ex: 157,90" step="0.01" value="157.90">
                 </div>
 
                 <div class="form-group">
@@ -121,8 +121,8 @@
                         <div class="notification-time">agora</div>
                     </div>
                     <div class="notification-content">
-                        <div class="notification-title">Pix recebido</div>
-                        <div class="notification-message">Você recebeu um Pix de R$ <span class="amount-preview">100,00</span> de <span class="name-preview">João Silva</span>.</div>
+                        <div class="notification-title">Transfêrencia recebida</div>
+                        <div class="notification-message">Você recebeu uma transferência de R$ <span class="amount-preview">157,90</span> de <span class="name-preview">João Silva</span>.</div>
                     </div>
                 </div>
             </div>

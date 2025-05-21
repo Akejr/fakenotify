@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     template: 'Você recebeu um Pix de R$ {amount} de {name}.'
                 },
                 'transferencia': {
-                    title: 'Transferência recebida',
+                    title: 'Transfêrencia recebida',
                     template: 'Você recebeu uma transferência de R$ {amount} de {name}.'
                 },
                 'cashback': {
@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectedApp = appTypeSelect.value;
         const selectedNotificationType = notificationTypeSelect.value;
         const name = nameInput.value || 'João Silva';
-        const amount = amountInput.value || '100,00';
+        const amount = amountInput.value || '157,90';
         
         // Atualizar classes e conteúdo do preview
         previewContainer.className = `notification ${selectedApp}`;
@@ -216,7 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const selectedApp = appTypeSelect.value;
         const selectedNotificationType = notificationTypeSelect.value;
         const name = nameInput.value || 'João Silva';
-        const amount = amountInput.value || '100,00';
+        const amount = amountInput.value || '157,90';
         const delay = parseInt(delayInput.value) || 5;
         
         // Configurar a notificação
